@@ -16,6 +16,14 @@ export class FormulaService {
   }
 
   validateFormula(formula: string): boolean {
+    formula = formula.replace(' ', '');
+    console.log(formula);
+
+    const regex =
+      /([A-Z]|\(([A-Z]|\([A-Z]([∧∨→↔][A-Z])*\))+([∧∨→↔]([A-Z]|\(([A-Z]|\([A-Z]([∧∨→↔][A-Z])*\))+)\))*\))([∧∨→↔]([A-Z]|\(([A-Z]|\([A-Z]([∧∨→↔][A-Z])*\))+([∧∨→↔]([A-Z]|\(([A-Z]|\([A-Z]([∧∨→↔][A-Z])*\))+)\))*\)))*/;
+
+    console.log(regex.test(formula));
+
     return true;
   }
 }

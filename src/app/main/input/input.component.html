@@ -6,4 +6,13 @@
     placeholder="Paste your formula here"
   />
 </mat-form-field>
-<button mat-button (click)="onInput()">Start</button>
+<div class="wrapper">
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="onInput()"
+    [disabled]="!input"
+  >
+    Generate
+  </button>
+</div>
