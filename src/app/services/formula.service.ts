@@ -1,29 +1,63 @@
 import { Injectable } from '@angular/core';
-import { Formula } from '../interfaces/formula.interface';
+import { Formula } from '../core/interfaces/formula.interface';
+import { Atom } from '../core/interfaces/atom.interface';
+
+import { Operator } from '../core/enums/operator.enum';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FormulaService {
-  createFormula(formula: string): Formula {
-    if (this.validateFormula(formula)) {
-      const formula: Formula = {};
+  atomRegex = /^-?[A-Z]$/;
 
-      return formula;
+  createFormula(formula: string): Formula {
+    let resultFormula: Formula;
+
+    if (this.atomRegex.test(formula)) {
+      let atom: Atom;
+      if (formula[0] === '-') {
+        atom = {
+          variable: formula[1],
+          negated: true,
+        };
+      } else {
+        atom = {
+          variable: formula[0],
+          negated: false,
+        };
+      }
+      resultFormula = {
+        content: atom,
+      };
     } else {
-      throw new Error('Invalid formula');
+      const regex = /^\((.*)(v|\^|->|<->)(.*)\)$/;
+      const matches = regex.exec(formula);
+      const left = this.createFormula(matches![1]);
+      const right = this.createFormula(matches![3]);
+      const operator = matches![2] as Operator;
+      resultFormula = {
+        content: { left, right, operator },
+      };
     }
+
+    return resultFormula;
   }
 
   validateFormula(formula: string): boolean {
     formula = formula.replace(' ', '');
-    console.log(formula);
 
-    const regex =
-      /([A-Z]|\(([A-Z]|\([A-Z]([∧∨→↔][A-Z])*\))+([∧∨→↔]([A-Z]|\(([A-Z]|\([A-Z]([∧∨→↔][A-Z])*\))+)\))*\))([∧∨→↔]([A-Z]|\(([A-Z]|\([A-Z]([∧∨→↔][A-Z])*\))+([∧∨→↔]([A-Z]|\(([A-Z]|\([A-Z]([∧∨→↔][A-Z])*\))+)\))*\)))*/;
+    if (this.atomRegex.test(formula)) return true;
 
-    console.log(regex.test(formula));
+    const regex = /^\((.*)(v|\^|->|<->)(.*)\)$/;
 
-    return true;
+    if (!regex.test(formula)) return false;
+
+    const matches = regex.exec(formula);
+    let valid = true;
+
+    valid = valid && this.validateFormula(matches![1]);
+    valid = valid && this.validateFormula(matches![3]);
+
+    return valid;
   }
 }

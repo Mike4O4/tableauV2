@@ -4,7 +4,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FormulaService } from '../../services/formula.service';
-import { Formula } from '../../interfaces/formula.interface';
+import { Formula } from '../../core/interfaces/formula.interface';
 
 @Component({
   selector: 'app-input',
@@ -15,13 +15,17 @@ import { Formula } from '../../interfaces/formula.interface';
 })
 export class InputComponent {
   input: string = '';
+  valid = true;
 
   constructor(private formulaService: FormulaService) {}
 
   onInput() {
+    if (!this.formulaService.validateFormula(this.input)) {
+      alert('Invalid Formula');
+      return;
+    }
     let formula: Formula;
-    try {
-      formula = this.formulaService.createFormula(this.input);
-    } catch {}
+    formula = this.formulaService.createFormula(this.input);
+    console.log(formula);
   }
 }
