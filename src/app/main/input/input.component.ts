@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { Form, FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,6 +16,7 @@ import { Formula } from '../../core/interfaces/formula.interface';
 export class InputComponent {
   input: string = '';
   valid = true;
+  @Output() formula = new EventEmitter<Formula>();
 
   constructor(private formulaService: FormulaService) {}
 
@@ -24,8 +25,13 @@ export class InputComponent {
       alert('Invalid Formula');
       return;
     }
-    let formula: Formula;
-    formula = this.formulaService.createFormula(this.input);
-    console.log(formula);
+
+    try {
+      this.formula.emit(this.formulaService.createFormula(this.input));
+    } catch (e) {
+      console.log(e);
+
+      alert('Invalid Formula');
+    }
   }
 }

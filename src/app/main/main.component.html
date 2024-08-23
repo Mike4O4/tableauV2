@@ -1,4 +1,4 @@
 <mat-card>
-  <app-input></app-input>
-  <app-output *ngIf="outputGenerated"></app-output>
+  <app-input (formula)="onValidInput($event)"></app-input>
+  <app-output *ngIf="formula != null"></app-output>
 </mat-card>

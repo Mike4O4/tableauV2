@@ -3,6 +3,7 @@ import { MatCardModule } from '@angular/material/card';
 import { InputComponent } from './input/input.component';
 import { OutputComponent } from './output/output.component';
 import { CommonModule } from '@angular/common';
+import { Formula } from '../core/interfaces/formula.interface';
 
 @Component({
   selector: 'app-main',
@@ -12,5 +13,10 @@ import { CommonModule } from '@angular/common';
   styleUrl: './main.component.scss',
 })
 export class MainComponent {
-  outputGenerated: boolean = false;
+  formula: Formula | null = null;
+
+  onValidInput(formula: Formula) {
+    console.log(formula);
+    this.formula = formula;
+  }
 }

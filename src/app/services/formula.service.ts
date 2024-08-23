@@ -9,6 +9,7 @@ import { Operator } from '../core/enums/operator.enum';
 })
 export class FormulaService {
   atomRegex = /^-?[A-Z]$/;
+  simpleTermRegex = /^\(-?[A-Z](v|\^|->|<->)-?[A-Z]\)$/;
 
   createFormula(formula: string): Formula {
     let resultFormula: Formula;
@@ -47,16 +48,30 @@ export class FormulaService {
     formula = formula.replace(' ', '');
 
     if (this.atomRegex.test(formula)) return true;
+    if (this.simpleTermRegex.test(formula)) return true;
 
-    const regex = /^\((.*)(v|\^|->|<->)(.*)\)$/;
+    let parts: string[] = [];
+    let part: string = '';
+    let count = 0;
+    for (let i = 0; i < formula.length; i++) {
+      if (formula[i] === '(') {
+        count++;
+      } else if (formula[i] === ')' && count > 1) {
+        part += formula[i];
+        parts.push(part);
+        part = '';
+        count--;
+        if (count < 0) return false;
+      }
+      if (count == 2) {
+        part += formula[i];
+      }
+    }
 
-    if (!regex.test(formula)) return false;
-
-    const matches = regex.exec(formula);
     let valid = true;
 
-    valid = valid && this.validateFormula(matches![1]);
-    valid = valid && this.validateFormula(matches![3]);
+    if (parts[0]) valid = valid && this.validateFormula(parts[0]);
+    if (parts[1]) valid = valid && this.validateFormula(parts[1]);
 
     return valid;
   }
