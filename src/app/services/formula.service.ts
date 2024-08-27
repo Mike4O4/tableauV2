@@ -9,10 +9,20 @@ import XRegExp from 'xregexp';
 })
 export class FormulaService {
   atomRegex = /^-?[A-Z]$/;
-  simpleTermRegex = /^-?[A-Z](v|\^|->|<->)-?[A-Z]$/;
+  simpleTermRegex = /^\(?-?[A-Z](v|\^|->|<->)-?[A-Z]\)?$/;
 
-  createFormula(formula: string) {
+  createFormula(formula: string): Formula {
     let resultFormula: Formula = { content: { variable: 'A', negated: false } };
+
+    if (this.atomRegex.test(formula)) {
+      if (formula[0] === '-') {
+        resultFormula.content = { variable: formula.slice(1), negated: true };
+      } else {
+        resultFormula.content = { variable: formula, negated: false };
+      }
+
+      return resultFormula;
+    }
 
     return resultFormula;
   }
@@ -35,33 +45,5 @@ export class FormulaService {
     });
 
     return valid;
-
-    // if (this.atomRegex.test(formula)) return true;
-    // if (this.simpleTermRegex.test(formula)) return true;
-
-    // let parts: string[] = [];
-    // let part: string = '';
-    // let count = 0;
-    // for (let i = 0; i < formula.length; i++) {
-    //   if (formula[i] === '(') {
-    //     count++;
-    //   } else if (formula[i] === ')' && count > 1) {
-    //     part += formula[i];
-    //     parts.push(part);
-    //     part = '';
-    //     count--;
-    //     if (count < 0) return false;
-    //   }
-    //   if (count == 2) {
-    //     part += formula[i];
-    //   }
-    // }
-
-    // let valid = true;
-
-    // if (parts[0]) valid = valid && this.validateFormula(parts[0]);
-    // if (parts[1]) valid = valid && this.validateFormula(parts[1]);
-
-    // return valid;
   }
 }
