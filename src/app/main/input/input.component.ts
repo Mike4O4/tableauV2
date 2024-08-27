@@ -21,10 +21,12 @@ export class InputComponent {
   constructor(private formulaService: FormulaService) {}
 
   onInput() {
-    if (!this.formulaService.validateFormula(this.input)) {
-      alert('Invalid Formula');
-      return;
-    }
+    console.log(this.formulaService.validateFormula(this.input));
+
+    // if (!this.formulaService.validateFormula(this.input)) {
+    //   alert('Invalid Formula');
+    //   return;
+    // }
 
     try {
       this.formula.emit(this.formulaService.createFormula(this.input));

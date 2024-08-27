@@ -16,7 +16,6 @@ export class MainComponent {
   formula: Formula | null = null;
 
   onValidInput(formula: Formula) {
-    console.log(formula);
     this.formula = formula;
   }
 }
