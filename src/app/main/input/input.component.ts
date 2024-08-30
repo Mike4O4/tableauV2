@@ -27,7 +27,11 @@ export class InputComponent {
     }
 
     try {
-      this.formula.emit(this.formulaService.createFormula(this.input));
+      const tmp = this.formulaService.createFormula(this.input);
+
+      console.log(tmp);
+
+      this.formula.emit(tmp);
     } catch (e) {
       console.log(e);
 
