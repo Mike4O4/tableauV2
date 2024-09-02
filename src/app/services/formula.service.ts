@@ -210,19 +210,46 @@ export class FormulaService {
 
     const recMatches = XRegExp.matchRecursive(formula, '\\(', '\\)', 'g');
 
-    console.log(recMatches);
-
     if (recMatches.length === 1) {
       const leftRegex = /-?[A-Z](v|\^|->|<->)\(.*\)/;
       const rightRegex = /\(.*\)(v|\^|->|<->)-?[A-Z]/;
 
       const leftMatches = leftRegex.exec(formula);
+      const rightMatches = rightRegex.exec(formula);
+
+      if (!leftMatches && !rightMatches) {
+        throw new Error('Invalid formula');
+      }
+
+      let left;
+      let right;
+      let operator;
 
       if (leftMatches) {
         if (formula[0] === '-') {
+          left = this.createFormula(formula[0] + formula[1]);
         } else {
+          left = this.createFormula(formula[0]);
         }
+        right = this.createFormula(recMatches[0]);
+        operator = leftMatches[1] as Operator;
       }
+
+      if (rightMatches) {
+        if (formula[formula.length - 2] === '-') {
+          right = this.createFormula(formula.substring(formula.length - 2));
+        } else {
+          right = this.createFormula(formula.substring(formula.length - 1));
+        }
+        left = this.createFormula(recMatches[0]);
+        operator = rightMatches[1] as Operator;
+      }
+
+      resultFormula.content = {
+        left: left as Formula,
+        right: right as Formula,
+        operator: operator as Operator,
+      };
     } else if (recMatches.length === 2) {
       let op: Operator;
       const diff = formula.length - recMatches[0].length - recMatches[1].length;
